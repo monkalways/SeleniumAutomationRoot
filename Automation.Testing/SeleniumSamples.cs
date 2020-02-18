@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Automation.Extensions.Components;
+using Automation.Extensions.Contracts;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
@@ -37,13 +39,45 @@ namespace Automation.Testing
         [TestMethod]
         public void SelectElementSamples()
         {
-            var driver = new ChromeDriver();
+            var driver = new WebDriverFactory(new DriverParams { Driver = "chrome" }).Get();
+            driver.GoToUrl("https://gravitymvctestapplication.azurewebsites.net/Course");
+            var selectElement = driver.GetElement(By.XPath("//select[@id='SelectedDepartment']")).AsSelect();
+
+            selectElement.SelectByValue("4");
+            Thread.Sleep(2000);
+            driver.Dispose();
+        }
+
+        [TestMethod]
+        public void WebDriverFactorySample()
+        {
+            var driver = new WebDriverFactory(new DriverParams { Driver = "firefox" }).Get();
             driver.Manage().Window.Maximize();
 
-            driver.Navigate().GoToUrl("https://gravitymvctestapplication.azurewebsites.net/Course");
-            var element = driver.FindElement(By.XPath("//select[@id='SelectedDepartment']"));
-            var selectElement = new SelectElement(element);
-            selectElement.SelectByValue("4");
+            driver.Navigate().GoToUrl("https://gravitymvctestapplication.azurewebsites.net/");
+            driver.FindElement(By.XPath("//a[.='Students']")).Click();
+            Thread.Sleep(2000);
+            driver.Dispose();
+        }
+
+        [TestMethod]
+        public void GoToUrlSample()
+        {
+            var driver = new WebDriverFactory(new DriverParams { Driver = "firefox" }).Get();
+            driver.GoToUrl("https://gravitymvctestapplication.azurewebsites.net/");
+
+            driver.FindElement(By.XPath("//a[.='Students']")).Click();
+            Thread.Sleep(2000);
+            driver.Dispose();
+        }
+
+        [TestMethod]
+        public void GetElementSample()
+        {
+            var driver = new WebDriverFactory(new DriverParams { Driver = "firefox" }).Get();
+            driver.GoToUrl("https://gravitymvctestapplication.azurewebsites.net/");
+
+            driver.GetElement(By.XPath("//a[.='Students']")).Click();
             Thread.Sleep(2000);
             driver.Dispose();
         }
